@@ -2,7 +2,7 @@ From Coq Require Import List Reals Lra Lia.
 
 From Coquelicot Require Import Coquelicot.
 
-From CoqE2EAI Require Import matrix_extensions piecewise_linear pwaf_operations.
+From CoqE2EAI Require Import matrix_extensions piecewise_affine pwaf_operations.
 
 Open Scope list_scope.
 Import ListNotations.

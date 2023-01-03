@@ -2,7 +2,7 @@ From Coq Require Import Reals Lia Lra.
 
 From Coquelicot Require Import Coquelicot.
 
-From CoqE2EAI Require Import matrix_extensions piecewise_linear neuron_functions pwaf_operations.
+From CoqE2EAI Require Import matrix_extensions piecewise_affine neuron_functions pwaf_operations.
 
 Open Scope R_scope.
 
