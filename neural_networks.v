@@ -118,29 +118,29 @@ End SequentialNetworkEvaluation.
 
 Section PWAF_conversion.
 
-Fixpoint nn_to_pwaf_convert {in_dim out_dim: nat}
+Fixpoint transform_nn_to_pwaf {in_dim out_dim: nat}
     (nn: NNSequential (input_dim := in_dim) (output_dim := out_dim)) 
     : option (PWAF in_dim out_dim) :=
     match nn with
         | NNOutput => Some (OutputPWAF)
         | NNPlainLayer _ _ _ => None
         | NNPWALayer _ pwaf next => 
-            match nn_to_pwaf_convert next with
+            match transform_nn_to_pwaf next with
             | Some next_pwaf => Some (pwaf_compose next_pwaf pwaf)
             | None => None
             end
         | NNUnknownLayer _ _ => None
     end.
     
-Theorem nn_to_pwaf_convert_correct:
+Theorem transform_nn_to_pwaf_correct:
     forall in_dim out_dim (x: colvec in_dim) (f_x: colvec out_dim) nn nn_pwaf,
-        Some nn_pwaf = nn_to_pwaf_convert nn ->
+        Some nn_pwaf = transform_nn_to_pwaf nn ->
         in_pwaf_domain nn_pwaf x ->
         is_pwaf_value nn_pwaf x f_x <-> nn_eval nn x = Some f_x.
 Proof.
     intros in_dim out_dim x f_x nn nn_pwaf Hrepr Hdomain.
-    induction nn; try (unfold nn_to_pwaf_convert in Hrepr; discriminate).
-    * unfold nn_to_pwaf_convert in Hrepr.
+    induction nn; try (unfold transform_nn_to_pwaf in Hrepr; discriminate).
+    * unfold transform_nn_to_pwaf in Hrepr.
       injection Hrepr. 
       intros Hnn_pwaf. 
       split.
@@ -199,9 +199,9 @@ Proof.
           rewrite Mplus_null_vector.
           reflexivity.
       }
-    * unfold nn_to_pwaf_convert in Hrepr.
-      fold (nn_to_pwaf_convert nn) in Hrepr.
-      remember (nn_to_pwaf_convert nn) as nn_pwaf_prev.
+    * unfold transform_nn_to_pwaf in Hrepr.
+      fold (transform_nn_to_pwaf nn) in Hrepr.
+      remember (transform_nn_to_pwaf nn) as nn_pwaf_prev.
       destruct nn_pwaf_prev as [nn_pwaf_prev|]; try discriminate.
       injection Hrepr as Hnn_pwaf_def.
       split.

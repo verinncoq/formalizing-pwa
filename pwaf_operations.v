@@ -480,7 +480,7 @@ Proof.
     split. symmetry. apply Hmatrix. symmetry. apply Hvector.
 Qed.
 
-Theorem pwaf_concat_prop
+Theorem pwaf_concat_univalence
     {in_dim1 in_dim2 out_dim1 out_dim2: nat} 
     (f: PWAF in_dim1 out_dim1)
     (g: PWAF in_dim2 out_dim2):
@@ -571,7 +571,7 @@ Definition pwaf_concat
     PWAF (in_dim1 + in_dim2) (out_dim1 + out_dim2)
     :=
     mkPLF (in_dim1 + in_dim2) (out_dim1 + out_dim2) (pwaf_concat_body f g) 
-        (pwaf_concat_prop f g).
+        (pwaf_concat_univalence f g).
 
 Theorem pwaf_concat_correct:
     forall in_dim1 in_dim2 out_dim1 out_dim2 x1 x2 f_x1 g_x2 
@@ -892,7 +892,7 @@ Definition pwaf_compose_body
     let body_g := (body in_dim hidden_dim g) in
     pwaf_compose_body_helper body_f body_g.
 
-Theorem pwaf_compose_prop
+Theorem pwaf_compose_univalence
     {in_dim hidden_dim out_dim: nat} 
     (f: PWAF hidden_dim out_dim)
     (g: PWAF in_dim hidden_dim) :
@@ -984,7 +984,7 @@ Definition pwaf_compose
     (g: PWAF in_dim hidden_dim):
     PWAF in_dim out_dim 
     :=
-    mkPLF in_dim out_dim (pwaf_compose_body f g) (pwaf_compose_prop f g).
+    mkPLF in_dim out_dim (pwaf_compose_body f g) (pwaf_compose_univalence f g).
 
 Lemma pwaf_compose_body_inv:
     forall in_dim hid_dim out_dim pf Mf bf pg Mg bg

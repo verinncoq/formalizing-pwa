@@ -14,7 +14,7 @@ Definition full_R_polyhedron (n: nat) := Polyhedron n nil.
 Definition linear_body {n m: nat} (M: matrix (T:=R) m n) (b: colvec m): list _ :=
     cons (full_R_polyhedron n, (M, b)) nil.
 
-Lemma linear_prop {n m: nat} (M: matrix m n) (b: colvec m):
+Lemma linear_univalence {n m: nat} (M: matrix m n) (b: colvec m):
     pwaf_univalence (linear_body M b).
 Proof.
     unfold pwaf_univalence.
@@ -27,7 +27,7 @@ Proof.
 Qed.
 
 Definition LinearPWAF {in_dim out_dim: nat} (M: matrix out_dim in_dim) (b: colvec out_dim) := 
-    mkPLF in_dim out_dim (linear_body M b) (linear_prop M b).
+    mkPLF in_dim out_dim (linear_body M b) (linear_univalence M b).
 
 Lemma linear_full_domain {n m: nat} (M: matrix m n) (b: colvec m):
     forall x, 
@@ -116,7 +116,7 @@ Definition ReLU1d_body: list (ConvexPolyhedron 1 * (matrix (T:=R) 1 1 * colvec 1
     := [(ReLU1d_polyhedra_left, (Mzero, null_vector 1));
         (ReLU1d_polyhedra_right, (Mone, null_vector 1))].
 
-Definition ReLU1d_pwaf_prop:
+Definition ReLU1d_pwaf_univalence:
     pwaf_univalence ReLU1d_body.
 Proof.
     unfold pwaf_univalence.
@@ -156,7 +156,7 @@ Proof.
     contradiction. contradiction.
 Qed.
       
-Definition ReLU1dPWAF := mkPLF 1 1 ReLU1d_body ReLU1d_pwaf_prop.
+Definition ReLU1dPWAF := mkPLF 1 1 ReLU1d_body ReLU1d_pwaf_univalence.
 
 Fixpoint ReLU_PWAF_helper (in_dim: nat): PWAF in_dim in_dim :=
     match in_dim with
