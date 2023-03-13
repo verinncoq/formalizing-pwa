@@ -17,7 +17,9 @@ To see more details, read the full text [here](https://arxiv.org/abs/2301.12893)
 ```
 │   README.md
 │   .gitignore
+│   LICENSE
 │   _CoqProject
+│   build.ps1            <---- Script to compile all files
 │   matrix_extensions.v  <---- Extensions of Coquelicot   
 │   neural_networks.v    <---- Neural network definition,
 │                              verified transfortmation
