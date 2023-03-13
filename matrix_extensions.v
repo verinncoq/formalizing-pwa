@@ -223,19 +223,6 @@ Proof.
     rewrite coeff_mat_default; try lia.
 Qed.
 
-(* If someone proves it, we are doomed *)
-Lemma pandora_box:
-    forall (v1: colvec 0) (v2: colvec 0),
-        v1 <> v2.
-Proof.
-    intros v1 v2.
-    rewrite <- (mk_matrix_bij 0 v1).
-    rewrite <- (mk_matrix_bij 1 v2).
-    intros H.
-    pose proof (mk_matrix_ext (T:=R)) as Hext.
-    specialize (Hext 0%nat 1%nat (coeff_mat 0 v1) (coeff_mat 1 v2)).
-Abort.
-
 (* Coeficient of a colvec V[i] with x0 as default value*)
 Definition coeff_colvec {m: nat} (x0: R) (V:colvec m) (i:nat) :=
   coeff_mat x0 V i 0.

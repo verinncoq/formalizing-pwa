@@ -52,6 +52,43 @@ End OutputPiecewise.
 
 Section ReLUPiecewise.
 
+(* Helper PWAF of zeroth dimension *)
+
+Definition ZeroDim_polyhedron
+    := Polyhedron 0 [Constraint 0 (null_vector 0) 0].
+
+Theorem ZeroDim_polyhedron_full: 
+    forall (x : colvec 0), in_convex_polyhedron x ZeroDim_polyhedron.
+Proof.
+   intros x.
+   unfold in_convex_polyhedron.
+   unfold ZeroDim_polyhedron.
+   intros constraint HIn.
+   destruct HIn; try contradiction.
+   rewrite <- H.
+   unfold satisfies_lc.
+   rewrite dot_null_vector.
+   lra. 
+Qed.
+
+Definition ZeroDim_body := 
+    [(ZeroDim_polyhedron, (Mone (T:=R_Ring) (n:=0), null_vector 0))].
+
+Theorem ZeroDim_univalence: 
+    pwaf_univalence ZeroDim_body.
+Proof.
+   unfold pwaf_univalence.
+   unfold ZeroDim_body.
+   unfold ForallPairs.
+   intros a b HaIn HbIn x HInboth.
+   destruct HaIn; try contradiction.
+   destruct HbIn; try contradiction.
+   rewrite <- H. rewrite <- H0.
+   simpl. reflexivity.
+Qed.
+
+Definition ZeroDimPWAF := mkPLF 0 0 ZeroDim_body ZeroDim_univalence.
+
 Definition ReLU1d_polyhedra_left 
     := Polyhedron 1 [Constraint 1 Mone 0].
 Definition ReLU1d_polyhedra_right 
@@ -160,7 +197,7 @@ Definition ReLU1dPWAF := mkPLF 1 1 ReLU1d_body ReLU1d_pwaf_univalence.
 
 Fixpoint ReLU_PWAF_helper (in_dim: nat): PWAF in_dim in_dim :=
     match in_dim with
-    | 0 => OutputPWAF (in_dim:=0) (out_dim:=0)
+    | 0 => ZeroDimPWAF
     | S n => pwaf_concat ReLU1dPWAF (ReLU_PWAF_helper n)
     end.
 
