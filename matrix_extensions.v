@@ -1184,3 +1184,24 @@ Proof.
 Qed.
 
 End ReshapeOperations.
+
+Module MatrixNotations.
+
+Declare Scope colvec_scope.
+Delimit Scope colvec_scope with v.
+Bind Scope colvec_scope with colvec.
+
+Notation "A * B" := (dot A B) : colvec_scope.
+
+Declare Scope matrix_scope.
+Delimit Scope matrix_scope with M.
+
+Notation "A * B" := (Mmult A B) : matrix_scope.
+Notation "A + B" := (Mplus A B) : matrix_scope.
+
+Declare Scope scalar_scope.
+Delimit Scope scalar_scope with scalar.
+
+Notation "c * M" := (scalar_mult c M) : scalar_scope.
+
+End MatrixNotations.

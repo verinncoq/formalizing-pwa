@@ -2,7 +2,10 @@ From Coq Require Import Reals List Arith Lia Lra.
 From Coquelicot Require Import Coquelicot.
 From CoqE2EAI Require Import matrix_extensions.
 Import ListNotations.
+Import MatrixNotations.
 
+Open Scope colvec_scope.
+Open Scope matrix_scope.
 Open Scope R_scope.
 Open Scope list_scope.
 
@@ -27,7 +30,7 @@ are from the definition of linear constraint
 *)
 Definition satisfies_lc {dim: nat} (x: colvec dim) (l: LinearConstraint dim): Prop :=
 match l with
-| Constraint c b => dot c x <= b
+| Constraint c b => (c * x)%v <= b
 end.    
 
 (* Direct evaluation of linear constraint as a function *)
@@ -186,7 +189,7 @@ Definition pwaf_univalence
                     let b1 := snd (snd e1) in
                     let M2 := fst (snd e2) in
                     let b2 := snd (snd e2) in
-                    Mplus (Mmult M1 x) b1 = Mplus (Mmult M2 x) b2
+                    ((M1 * x) + b1 = (M2 * x) + b2)%M
     ) l. 
 
 (**
@@ -270,15 +273,14 @@ Fixpoint pwaf_eval_helper
     {in_dim out_dim: nat}
     (body: list (ConvexPolyhedron in_dim * ((matrix (T:=R) out_dim in_dim) * colvec out_dim)))
     (x: colvec in_dim) 
-    : option (ConvexPolyhedron in_dim * ((matrix out_dim in_dim) * colvec out_dim))
     :=
     match body with
     | nil => None
     | body_el :: next => 
         match body_el with
-        | (polyh, (M, b)) =>
+        | (polyh, affine_f) =>
             match polyhedron_eval x polyh with
-            | true => Some (body_el)
+            | true => Some affine_f
             | false => pwaf_eval_helper next x
             end
         end
@@ -287,8 +289,8 @@ Fixpoint pwaf_eval_helper
 Lemma pwaf_eval_helper_some_in_domain:
     forall in_dim out_dim (f: PWAF in_dim out_dim) x,
         in_pwaf_domain f x ->
-        exists body_el,
-            pwaf_eval_helper (body in_dim out_dim f) x = Some body_el.
+        exists (body_el: (ConvexPolyhedron in_dim * _)),
+            pwaf_eval_helper (body in_dim out_dim f) x = Some (snd body_el).
 Proof.
     intros in_dim out_dim f x Hdomain.
     induction f.
@@ -332,7 +334,7 @@ Definition pwaf_eval {in_dim out_dim: nat}
     :=
     match pwaf_eval_helper (body in_dim out_dim f) x with
     | None => None
-    | Some ((polyh, (M,b))) => Some (Mplus (Mmult M x) b)
+    | Some (M,b) => Some (Mplus (Mmult M x) b)
     end.
 
 Theorem pwaf_eval_correct :

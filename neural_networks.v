@@ -25,10 +25,10 @@ Inductive NNSequential {input_dim output_dim: nat} :=
 
 Definition NNLinear 
     {input_dim hidden_dim output_dim: nat} 
-    (M: matrix hidden_dim input_dim) 
+    (W: matrix hidden_dim input_dim) 
     (b: colvec hidden_dim) 
     (NNnext: NNSequential (input_dim:=hidden_dim) (output_dim:=output_dim)) :=
-    NNPWALayer (LinearPWAF M b) NNnext.
+    NNPWALayer (LinearPWAF W b) NNnext.
 
 Definition NNReLU
     {input_dim output_dim: nat} 

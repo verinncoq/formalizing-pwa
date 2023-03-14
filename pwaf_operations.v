@@ -4,8 +4,12 @@ Import ListNotations.
 From Coquelicot Require Import Coquelicot.
 
 From CoqE2EAI Require Import matrix_extensions piecewise_affine.
+Import MatrixNotations.
 
 Open Scope list_scope.
+Open Scope matrix_scope.
+Open Scope colvec_scope.
+Open Scope R_scope.
 
 Section PWAFConcatenation.
 
@@ -689,18 +693,15 @@ End PWAFConcatenation.
 
 Section PWAFComposition.
 
-Fixpoint compose_polyhedra_helper
+Definition compose_polyhedra_helper
     {in_dim hidden_dim: nat} 
     (M: matrix hidden_dim in_dim)
     (b1: colvec hidden_dim)
     (l_f: list (LinearConstraint hidden_dim)) :=
-    match l_f with 
-    | [] => []
-    | (Constraint c b2) :: tail =>
-        Constraint in_dim (transpose (Mmult (transpose c) M)) (b2 - (dot c b1)) :: 
-            compose_polyhedra_helper M b1 tail
-    end.
-        
+    map (fun c => match c with
+      Constraint c b2 => Constraint in_dim 
+        (transpose ((transpose c) * M)%M) (b2 - (c * b1)%v)
+    end) l_f. 
 
 Definition compose_polyhedra
     {in_dim hidden_dim: nat} 
@@ -861,7 +862,7 @@ Definition compose_affine_functions
     (M_g: matrix (T:=R) hidden_dim in_dim)
     (b_g: colvec hidden_dim)
     :=
-    (Mmult M_f M_g, Mplus (Mmult M_f b_g) b_f).
+    (M_f * M_g, (M_f * b_g) + b_f)%M.
 
 Definition pwaf_compose_body_helper 
     {in_dim hidden_dim out_dim: nat} 

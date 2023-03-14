@@ -4,8 +4,11 @@ From Coquelicot Require Import Coquelicot.
 
 From CoqE2EAI Require Import matrix_extensions piecewise_affine pwaf_operations.
 
-Open Scope list_scope.
 Import ListNotations.
+Import MatrixNotations.
+
+Open Scope list_scope.
+Open Scope scalar_scope.
 
 Section LinearPiecewise.
 
@@ -92,7 +95,7 @@ Definition ZeroDimPWAF := mkPLF 0 0 ZeroDim_body ZeroDim_univalence.
 Definition ReLU1d_polyhedra_left 
     := Polyhedron 1 [Constraint 1 Mone 0].
 Definition ReLU1d_polyhedra_right 
-    := Polyhedron 1 [Constraint 1 (scalar_mult (-1) Mone) 0].
+    := Polyhedron 1 [Constraint 1 ((-1) * Mone)%scalar 0].
 
 Lemma RelU1d_polyhedra_intersect:
     forall x, 
